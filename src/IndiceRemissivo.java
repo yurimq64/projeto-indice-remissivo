@@ -31,6 +31,12 @@ public class IndiceRemissivo {
                     palavraLimpa = palavraLimpa.replace(":", "");
                     palavraLimpa = palavraLimpa.replace("(", "");
                     palavraLimpa = palavraLimpa.replace(")", "");
+                    palavraLimpa = palavraLimpa.replace("á", "a").replace("à", "a").replace("ã", "a").replace("â", "a");
+                    palavraLimpa = palavraLimpa.replace("é", "e").replace("ê", "e");
+                    palavraLimpa = palavraLimpa.replace("í", "i");
+                    palavraLimpa = palavraLimpa.replace("ó", "o").replace("õ", "o").replace("ô", "o");
+                    palavraLimpa = palavraLimpa.replace("ú", "u").replace("ü", "u");
+                    palavraLimpa = palavraLimpa.replace("ç", "c");
 
                     if (!palavraLimpa.isEmpty()) {
                         hash.insere(palavraLimpa);
@@ -38,7 +44,6 @@ public class IndiceRemissivo {
                 }
                 scannerLinha.close();
             }
-            System.out.println("1. Chaves carregadas.");
         } catch (IOException e) {
             System.err.println("Erro ao ler " + e.getMessage());
             return;
@@ -64,6 +69,12 @@ public class IndiceRemissivo {
                     palavraLimpa = palavraLimpa.replace(":", "");
                     palavraLimpa = palavraLimpa.replace("(", "");
                     palavraLimpa = palavraLimpa.replace(")", "");
+                    palavraLimpa = palavraLimpa.replace("á", "a").replace("à", "a").replace("ã", "a").replace("â", "a");
+                    palavraLimpa = palavraLimpa.replace("é", "e").replace("ê", "e");
+                    palavraLimpa = palavraLimpa.replace("í", "i");
+                    palavraLimpa = palavraLimpa.replace("ó", "o").replace("õ", "o").replace("ô", "o");
+                    palavraLimpa = palavraLimpa.replace("ú", "u").replace("ü", "u");
+                    palavraLimpa = palavraLimpa.replace("ç", "c");
 
                     if (!palavraLimpa.isEmpty()) {
                         char primeiraLetra = palavraLimpa.charAt(0);
@@ -80,8 +91,9 @@ public class IndiceRemissivo {
 
                 numeroLinha++;
             }
-            System.out.println("Texto processado.");
             hash.imprime();
+
+            hash.gerarRelatorio(arquivoSaida);
         }
         catch (IOException e) {
             System.err.println("Erro ao ler " + e.getMessage());
@@ -368,6 +380,16 @@ public class IndiceRemissivo {
             return false;
         }
 
+        public String toString() {
+            StringBuilder sb = new StringBuilder();
+            Nodo cursor = this.inicio;
+            while(cursor != null) {
+                sb.append(cursor.elemento).append(" ");
+                cursor = cursor.proximo;
+            }
+            return sb.toString().trim();
+        }
+
     }
 
     static class HashColisaoExterior {
@@ -425,6 +447,19 @@ public class IndiceRemissivo {
         public ArvoreBinariaBusca.Nodo busca(String chave) {
             int endereco = funcaoHash(chave);
             return this.vetor[endereco].buscaNo(chave);
+        }
+
+        public void gerarRelatorio(String nomeArquivo) {
+            try (java.io.BufferedWriter bw = new java.io.BufferedWriter(new java.io.FileWriter(nomeArquivo))) {
+
+                for (int i = 0; i < vetor.length; i++) {
+                    if (!vetor[i].estaVazia()) {
+                        vetor[i].gravarArquivo(bw);
+                    }
+                }
+            } catch (java.io.IOException e) {
+                System.err.println("Erro ao gravar arquivo: " + e.getMessage());
+            }
         }
     }
 
@@ -673,6 +708,23 @@ public class IndiceRemissivo {
 
         public int altura() {
             return this.altura(this.raiz);
+        }
+
+        public void gravarArquivo(java.io.BufferedWriter bw) throws java.io.IOException {
+            gravarRec(this.raiz, bw);
+        }
+
+        private void gravarRec(Nodo nodo, java.io.BufferedWriter bw) throws java.io.IOException {
+            if (nodo == null) return;
+
+            gravarRec(nodo.esquerdo, bw);
+
+            if (!nodo.ocorrencias.estaVazia()) {
+                bw.write(nodo.chave + " " + nodo.ocorrencias.toString());
+                bw.newLine();
+            }
+
+            gravarRec(nodo.direito, bw);
         }
     }
 }
