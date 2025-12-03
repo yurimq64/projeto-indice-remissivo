@@ -37,6 +37,7 @@ public class IndiceRemissivo {
                     palavraLimpa = palavraLimpa.replace("ó", "o").replace("õ", "o").replace("ô", "o");
                     palavraLimpa = palavraLimpa.replace("ú", "u").replace("ü", "u");
                     palavraLimpa = palavraLimpa.replace("ç", "c");
+                    palavraLimpa = palavraLimpa.replace("\"", "");
 
                     if (!palavraLimpa.isEmpty()) {
                         hash.insere(palavraLimpa);
@@ -75,6 +76,7 @@ public class IndiceRemissivo {
                     palavraLimpa = palavraLimpa.replace("ó", "o").replace("õ", "o").replace("ô", "o");
                     palavraLimpa = palavraLimpa.replace("ú", "u").replace("ü", "u");
                     palavraLimpa = palavraLimpa.replace("ç", "c");
+                    palavraLimpa = palavraLimpa.replace("\"", "");
 
                     if (!palavraLimpa.isEmpty()) {
                         char primeiraLetra = palavraLimpa.charAt(0);
@@ -193,6 +195,10 @@ public class IndiceRemissivo {
         }
 
         public void insereFinal(int elemento) {
+
+            if (this.fim != null && this.fim.elemento == elemento) {
+                return;
+            }
 
             Nodo novo = new Nodo(elemento);
 
